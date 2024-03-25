@@ -131,3 +131,9 @@ dist
 
 # feature-gen
 .features-gen
+
+src/data
+/playwright-report/
+src/features/**/*.local.json
+src/secrets.json
+test-results/

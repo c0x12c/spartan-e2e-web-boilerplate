@@ -10,6 +10,9 @@
   "dependencies": {
     "@cucumber/cucumber": "^10.3.1",
     "@playwright/test": "^1.41.2",
+    "@synthetixio/synpress": "^3.7.2-beta.10",
+    "@typescript-eslint/eslint-plugin": "^7.1.0",
+    "@typescript-eslint/parser": "^7.1.0",
     "dotenv": "^16.4.5",
     "eslint": "^8.56.0",
     "eslint-config-prettier": "^9.1.0",
@@ -31,7 +34,12 @@
     "@types/node": "^20.11.19"
   },
   "scripts": {
-    "e2e": "yarn bddgen && yarn playwright test"
+    "e2e": "yarn bddgen && yarn playwright test",
+    "lint": "tsc && eslint .",
+    "lint:fix": "eslint . --fix",
+    "prettier": "prettier -w \"{src,mocks,scripts}/**/*.{ts,tsx,js}\"",
+    "fix": "yarn lint:fix && ts-prune && yarn prettier",
+    "pre-commit": "lint-staged && tsc"
   },
   "browserslist": {
     "production": [
@@ -51,5 +59,5 @@
     ],
     "*.js": "eslint --cache --fix"
   },
-  "packageManager": "yarn@4.0.2"
+  "packageManager": "yarn@4.1.0"
 }

@@ -1,10 +1,13 @@
-import { TestInfo } from '@playwright/test';
-import fs from 'fs';
-import path from 'path';
+import { TestInfo } from '@playwright/test'
+import { importAccount } from '@synthetixio/synpress/commands/metamask'
+import fs from 'fs'
+import { get } from 'lodash'
+import path from 'path'
 
-import { TestDataNameUnknownError } from './types/exception';
-import { AUTH_DIR, DATA_DIR, DATA_PREFIX } from './constant';
-import { DATA_PATHS } from './enum';
+import { AUTH_DIR, DATA_DIR, DATA_PREFIX } from './constant'
+import { DATA_PATHS } from './enum'
+import { TestDataNameUnknownError } from './types/exception'
+import { CommonData } from './types/common'
 
 /**
  * Load data with specified name.
@@ -17,22 +20,21 @@ import { DATA_PATHS } from './enum';
  */
 export function loadData(name: keyof typeof DATA_PATHS) {
   if (Object.keys(DATA_PATHS).indexOf(name) === -1) {
-    throw new TestDataNameUnknownError(name);
+    throw new TestDataNameUnknownError(name)
   }
 
   // Corresponding environment variable
-  const dataEnvKey = DATA_PREFIX + name;
+  const dataEnvKey = DATA_PREFIX + name
 
   if (dataEnvKey in process.env) {
-    const dataContent = (process.env[dataEnvKey] as string).trim();
+    const dataContent = (process.env[dataEnvKey] as string).trim()
     if (dataContent !== '') {
-      return JSON.parse(Buffer.from(dataContent, 'base64').toString('utf-8'));
+      return JSON.parse(Buffer.from(dataContent, 'base64').toString('utf-8'))
     }
   }
 
-  const dataFullPath = path.join(DATA_DIR, DATA_PATHS[name]);
-
-  return JSON.parse(fs.readFileSync(dataFullPath).toString('utf-8'));
+  const dataFullPath = path.join(DATA_DIR, DATA_PATHS[name])
+  return JSON.parse(fs.readFileSync(dataFullPath).toString('utf-8'))
 }
 
 /**
@@ -42,7 +44,17 @@ export function loadData(name: keyof typeof DATA_PATHS) {
  * @returns data content
  */
 export function getTestDataByKey(testData: Record<string, object>, key: string): string {
-  return testData[key] as unknown as string;
+  return get(testData, key) as unknown as string
+}
+
+/**
+ * Get common data by key pattern.
+ * @param commonData Common data object
+ * @param key Key pattern to get test data. See more at https://lodash.com/docs/4.17.15#get
+ * @returns data content
+ */
+export function getDataByKey(commonData: CommonData, key: string): string {
+  return get(commonData, key) as unknown as string
 }
 
 /**
@@ -60,8 +72,8 @@ export function getAuthPath(testInfo: TestInfo, dataName: string, userKey: strin
   return path.join(
     testInfo.project.outputDir,
     AUTH_DIR,
-    dataName + '_' + userKey + '_' + testInfo.parallelIndex + '.json'
-  );
+    dataName + '_' + userKey + '_' + testInfo.parallelIndex + '.json',
+  )
 }
 
 /**
@@ -70,7 +82,7 @@ export function getAuthPath(testInfo: TestInfo, dataName: string, userKey: strin
  * @returns URL after trimming
  */
 export function trimUrl(url: string) {
-  return url.replace(/\/+$/, '');
+  return url.replace(/\/+$/, '')
 }
 
 /**
@@ -80,7 +92,7 @@ export function trimUrl(url: string) {
  * @returns Random integer in range [min, max]
  */
 export function randomIntInRange(min: number, max: number) {
-  return Math.floor(Math.random() * (max - min + 1) + min);
+  return Math.floor(Math.random() * (max - min + 1) + min)
 }
 
 /**
@@ -91,6 +103,29 @@ export function randomIntInRange(min: number, max: number) {
  */
 export async function repeatAsync(times: number, func: () => Promise<void>) {
   for (let i = 0; i < times; i++) {
-    await func();
+    await func()
   }
+}
+
+export const importAccounts = async (PKArray: string[]) => {
+  for (const PK of PKArray) {
+    await importAccount(PK)
+  }
+}
+
+export const shortenAddress = (address: string, length = 4): string => {
+  if (!address) {
+    return ''
+  }
+
+  return `${address.slice(0, length + 2)}...${address.slice(-length)}`
+}
+
+export const parseFileToJson = (filePath: string) => {
+  const fileContent = fs.readFileSync(filePath, 'utf-8')
+  return JSON.parse(fileContent)
+}
+
+export function throwExpression(errorMessage: string): never {
+  throw new Error(errorMessage)
 }

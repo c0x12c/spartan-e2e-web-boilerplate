@@ -245,7 +245,7 @@ Given('I load data {string}', async ({ scenarioData }, dataName) => {
 });
 
 When(
-  'I type test data {string} to input {string}',
+  'I type data with key {string} to input {string}',
   async ({ scenarioData, basePage }, dataKey, inputName) => {
     // testData stored with above step can be used in this step
     const dataContent = getTestDataByKey(scenarioData.testData, dataKey);
@@ -279,33 +279,36 @@ Scenario Outline: Sample scenario
       | date     |
 ```
 
-- For confidential data, it should be placed inside an external JSON file in folder `data`, and then the data is loaded and used in step function (see below section).
-  - This JSON file should **follows naming convention** `*.local.json` to avoid it accidentially pushed to the repository (it will be ignored by git).
-  - To get JSON file for runnning locally, please ask authorized members in team.
+- For confidential data, it should be placed inside an external JSON file `secrets.json`, and then the data is loaded and used in step function of page (see below section).
+To get JSON file for runnning locally, please ask authorized members in team.
 
 ```json
-// File data/user.local.json
+// File secrets.json
 {
-    "admin": {
-        "username": "<web dashboard username>",
-        "password": "<web dashboard password>"
-    }
+  "admin": {
+    "email": "admin@gmail.com",
+    "password": "password"
+  },
+  "user": {
+    "email": "user@gmail.com",
+    "password": "password"
+  }
 }
 ```
 
 ### External data
 
-- When an external data file is used, it should be defined in `DATA_PATHS` enum (in `common/enum.ts`)
-
-```ts
-export enum DATA_PATHS {
-  // Test data file paths, relative to data folder
-  USER = 'user.local.json',
+- We have 2 types of test data: common and feature test data.
+For common action like click button, input text. We need to define data for each feature in json like:
+```json
+// File common.json
+{
+    "address": {
+        "name": "E2E4",
+        "address": "0x8881bA8f386431661C90D89EEB87C15f0Ea85FbF"
+    }
 }
 ```
-
-- In above example, the **name** of data is `USER`. The framework also assumes that there is an **environment variable** `E2E_DATA_USER` that can be used for replacing `user.local.json` file in CI environment.
-  - The value of that environment variable is the *json file content encoded in base64*.
 
 - To use the data in a scenario, refer to its name in common data steps
 
@@ -313,16 +316,13 @@ export enum DATA_PATHS {
 Scenario: Login
     Given I load data "USER"
     And I go to login page
-    When I type test data "admin.username" to input "Email"
-    And I type test data "admin.password" to input "Password"
+    When I type data with key "admin.username" to input with role "Email"
+    And I type data with key "admin.password" to input with role "Password"
     And I click button "Login"
     Then I should be in home page
 ```
 
-After step `Given I load data "USER"` the data is available in `scenarioData.testData`
 
-- **Login as a step**: `I login as user {string} from data {string}`. It also re-uses the session within the same execution worker.
+- **Login as a step**: `I login as user`. It also re-uses the session within the same execution worker.
 
-- External data structure (type) should be placed in file `common/types/data.ts`
-
-- Complex non-confidential data can also be stored externally like confidential data, except that the name of data file does **not** match `*.local.json`, e.g. `search-criteria.json`, so that it can be committed together with the code to the repository.
+- External data structure (type) should be placed in each feature packages
