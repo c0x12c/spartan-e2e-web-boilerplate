@@ -34,6 +34,39 @@ export class BasePage {
     await this.page.goto(this.getUrl())
   }
 
+  /**
+   * Go back to previous page
+   */
+  async goBack() {
+    await this.page.goBack()
+  }
+
+  /**
+   * Go forward to next page
+   */
+  async goForward() {
+    await this.page.goForward()
+  }
+
+  /**
+   * Close current tab
+   */
+  async close() {
+    await this.page.close()
+  }
+
+  /**
+   * Close tab by index
+   * @param index index of the tab
+   */
+  async closeByIndex(index: number) {
+    await this.page.context().pages()[index].close()
+  }
+
+  /**
+   * set localStorage
+   * @param localStorageData Array of LocalStorageItem
+   */
   async setLocalStorage(localStorageData: Array<LocalStorageItem>) {
     await this.page.evaluate((localStorageData) => {
       for (let i = 0; i < localStorageData.length; i++) {
@@ -57,6 +90,80 @@ export class BasePage {
    */
   async waitForTimeout(timeout: number) {
     await this.page.waitForTimeout(timeout)
+  }
+
+  /**
+   * Wait for a response. Should be used for debugging only.
+   * @param url url of the response
+   */
+  async waitForResponse(url: string, code = 200) {
+    await this.page.waitForResponse((response) => response.url().includes(url) && response.status() === code)
+  }
+
+  /**
+   * Hover on an element by its label
+   * @param label Label of the element
+   */
+  async hoverByLabel(label: string) {
+    await this.page.getByLabel(label).hover()
+  }
+
+  /**
+   * Hover on an element by its role and name
+   * @param role Role of the element
+   * @param name Accessible name of the element
+   */
+  async hoverByRole(role: Parameters<Page['getByRole']>[0], name: string) {
+    await this.page.getByRole(role, { name, exact: true }).hover()
+  }
+
+  /**
+   * Hover on an element by its locator
+   * @param locator Locator of the element
+   */
+  async hoverByLocator(locator: string) {
+    await this.page.locator(locator).hover()
+  }
+
+  /**
+   * Copy text from an element by its label to clipboard
+   * @param label Label of the element
+   */
+  async copyByLabel(label: string) {
+    await this.page
+      .getByLabel(label)
+      .textContent()
+      .then((textContent) => navigator.clipboard.writeText(textContent ?? ''))
+  }
+
+  /**
+   * Copy text from an element by its locator to clipboard
+   * @param locator Locator of the element
+   */
+  async copyByLocator(locator: string) {
+    await this.page
+      .locator(locator)
+      .textContent()
+      .then((textContent) => navigator.clipboard.writeText(textContent ?? ''))
+  }
+
+  /**
+   * Paste text from clipboard to an input element by its label
+   */
+  async pasteByLabel(label: string) {
+    await navigator.clipboard.readText().then(async (textContent) => {
+      await this.page.getByLabel(label).fill(textContent)
+    })
+  }
+
+  /**
+   * Paste text from clipboard to an input element by its locator
+   * @param locator Locator of the element
+   */
+  async pasteByLocator(locator: string) {
+    await navigator.clipboard.readText().then(async (textContent) => {
+      await this.page.locator(locator).fill(textContent)
+    })
   }
 
   /**

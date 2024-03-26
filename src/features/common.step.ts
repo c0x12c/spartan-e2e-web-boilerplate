@@ -1,5 +1,6 @@
 import { defineParameterType } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
+import { url } from 'inspector'
 
 import { Given, Then, When } from '../common/fixtures'
 import { getDataByKey, shortenAddress } from '../common/utils'
@@ -10,8 +11,9 @@ defineParameterType({
   transformer: (str: string) => str.split(',').map((item) => item.trim()),
 })
 
-Given('I load data {string}', async ({ commonDataProvider }, dataName) => {})
-
+/**
+ * Action: Go
+ */
 Given('I go to home page', async ({ basePage }) => {
   await basePage.goto()
 })
@@ -20,14 +22,40 @@ Given('I go to login page', async ({ loginPage }) => {
   await loginPage.goto()
 })
 
-Given('I go to address page', async ({ addressPage }) => {
-  await addressPage.goto()
+Given('I go back', async ({ basePage }) => {
+  await basePage.goBack()
 })
 
+Given('I go forward', async ({ basePage }) => {
+  await basePage.goForward()
+})
+
+/**
+ * Action: Close tab
+ */
+Given('I close current tab', async ({ basePage }) => {
+  await basePage.close()
+})
+
+Given('I close tab by index {int}', async ({ basePage }, index) => {
+  await basePage.closeByIndex(index)
+})
+
+/**
+ * Action: Wait
+ */
 When('I wait for {int} seconds', async ({ basePage }, seconds) => {
   await basePage.waitForTimeout(seconds * 1000)
 })
 
+When('I wait for response of API with key {string}', async ({ commonDataProvider, basePage }, dataKey) => {
+  const apiUrl = getDataByKey(commonDataProvider.commonData, dataKey)
+  await basePage.waitForResponse(apiUrl)
+})
+
+/**
+ * Action: Type
+ */
 When(
   'I type data with key {string} to input with role {string}',
   async ({ commonDataProvider, basePage }, dataKey, inputName) => {
@@ -37,18 +65,10 @@ When(
 )
 
 When(
-  'I type secret data with key {string} to input with locator {string}',
-  async ({ secretDataProvider, basePage }, dataKey, inputName) => {
-    const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
-    await basePage.fillByLocator(inputName, dataContent)
-  },
-)
-
-When(
   'I type data with key {string} to input with locator {string}',
-  async ({ commonDataProvider, basePage }, dataKey, inputName) => {
+  async ({ commonDataProvider, basePage }, dataKey, locator) => {
     const dataContent = getDataByKey(commonDataProvider.commonData, dataKey) ?? dataKey
-    await basePage.fillByLocator(inputName, dataContent)
+    await basePage.fillByLocator(locator, dataContent)
   },
 )
 
@@ -60,8 +80,32 @@ When(
   },
 )
 
-When('I type {string} to input with locator {string}', async ({ basePage }, dataContent, inputName) => {
-  await basePage.fillByLocator(inputName, dataContent)
+When(
+  'I type secret data with key {} to input with role {string}',
+  async ({ secretDataProvider, basePage }, dataKey, inputName) => {
+    const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
+    await basePage.fillByRoleTextbox(inputName, dataContent)
+  },
+)
+
+When(
+  'I type secret data with key {string} to input with locator {string}',
+  async ({ secretDataProvider, basePage }, dataKey, locator) => {
+    const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
+    await basePage.fillByLocator(locator, dataContent)
+  },
+)
+
+When(
+  'I type secret data with key {string} to input with placeholder {string}',
+  async ({ secretDataProvider, basePage }, dataKey, placeholder) => {
+    const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
+    await basePage.fillByPlaceholder(placeholder, dataContent)
+  },
+)
+
+When('I type {string} to input with locator {string}', async ({ basePage }, dataContent, locator) => {
+  await basePage.fillByLocator(locator, dataContent)
 })
 
 When('I type {string} to input with role {string}', async ({ basePage }, text, inputName) => {
@@ -79,6 +123,9 @@ When(
   },
 )
 
+/**
+ * Action: Fill all
+ */
 When(
   'I fill all the inputs with placeholder {string} with values: {listOfString}',
   async ({ basePage }, placeholder, values) => {
@@ -89,6 +136,24 @@ When(
   },
 )
 
+/**
+ * Action: Hover
+ */
+When('I hover on element with label {string}', async ({ basePage }, label) => {
+  await basePage.hoverByLabel(label)
+})
+
+When('I hover on element with locator {string}', async ({ basePage }, locator) => {
+  await basePage.hoverByLocator(locator)
+})
+
+When('I hover on element with role {string} and name {string}', async ({ basePage }, role, name) => {
+  await basePage.hoverByRole(role, name)
+})
+
+/**
+ * Action: Click
+ */
 When('I click element with label {string}', async ({ basePage }, label) => {
   await basePage.clickByLabel(label)
 })
@@ -121,8 +186,41 @@ When('I click button with locator {string} at index {int}', async ({ basePage },
   await basePage.clickByLocator(locator, index)
 })
 
+When('I click menuitem {string}', async ({ basePage }, name) => {
+  await basePage.clickByRole('menuitem', name)
+})
+
+/**
+ * Action: Copy
+ */
+When('I copy element with label {string} to clipboard', async ({ basePage }, label) => {
+  await basePage.copyByLabel(label)
+})
+
+When('I copy element with locator {string} to clipboard', async ({ basePage }, locator) => {
+  await basePage.copyByLocator(locator)
+})
+
+/**
+ * Action: Paste
+ */
+When('I paste from clipboard to element with label {string}', async ({ basePage }, label) => {
+  await basePage.pasteByLabel(label)
+})
+
+When('I paste from clipboard to element with locator {string}', async ({ basePage }, locator) => {
+  await basePage.pasteByLocator(locator)
+})
+
+/**
+ * Assertion
+ */
 Then('I should be in home page', async ({ basePage }) => {
   await expect(basePage.getPage()).toHaveURL(basePage.getUrl())
+})
+
+Then('I should be in another page', async ({ basePage }) => {
+  await expect(basePage.getPage()).not.toHaveURL(basePage.getUrl())
 })
 
 Then('I expect that the title contains {string}', async ({ basePage }, keyword) => {

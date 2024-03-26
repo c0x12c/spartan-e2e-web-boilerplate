@@ -6,8 +6,8 @@ import path from 'path'
 
 import { AUTH_DIR, DATA_DIR, DATA_PREFIX } from './constant'
 import { DATA_PATHS } from './enum'
-import { TestDataNameUnknownError } from './types/exception'
 import { CommonData } from './types/common'
+import { TestDataNameUnknownError } from './types/exception'
 
 /**
  * Load data with specified name.
