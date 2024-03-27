@@ -1,10 +1,6 @@
 name: Playwright Tests
 on:
   workflow_dispatch:
-  push:
-    branches: [ master ]
-  pull_request:
-    branches: [ master ]
 jobs:
   playwright-tests:
     timeout-minutes: 60
