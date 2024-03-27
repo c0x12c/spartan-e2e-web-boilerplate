@@ -22,22 +22,22 @@ Given('I go to login page', async ({ loginPage }) => {
   await loginPage.goto()
 })
 
-Given('I go back', async ({ basePage }) => {
+When('I go back', async ({ basePage }) => {
   await basePage.goBack()
 })
 
-Given('I go forward', async ({ basePage }) => {
+When('I go forward', async ({ basePage }) => {
   await basePage.goForward()
 })
 
 /**
  * Action: Close tab
  */
-Given('I close current tab', async ({ basePage }) => {
+When('I close current tab', async ({ basePage }) => {
   await basePage.close()
 })
 
-Given('I close tab by index {int}', async ({ basePage }, index) => {
+When('I close tab at index {int}', async ({ basePage }, index) => {
   await basePage.closeByIndex(index)
 })
 
@@ -81,7 +81,7 @@ When(
 )
 
 When(
-  'I type secret data with key {} to input with role {string}',
+  'I type secret data with key {string} to input with role {string}',
   async ({ secretDataProvider, basePage }, dataKey, inputName) => {
     const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
     await basePage.fillByRoleTextbox(inputName, dataContent)
@@ -115,6 +115,20 @@ When('I type {string} to input with role {string}', async ({ basePage }, text, i
 When('I type {string} to input with placeholder {string}', async ({ basePage }, text, placeholder) => {
   await basePage.fillByPlaceholder(placeholder, text)
 })
+
+When(
+  'I type {string} to input with role {string} at index {int}',
+  async ({ basePage }, text, name, index) => {
+    await basePage.getPage().getByRole('textbox', { name }).nth(index).fill(text)
+  },
+)
+
+When(
+  'I type {string} to input with locator {string} at index {int}',
+  async ({ basePage }, text, locator, index) => {
+    await basePage.getPage().locator(locator).nth(index).fill(text)
+  },
+)
 
 When(
   'I type {string} to input with placeholder {string} at index {int}',
@@ -154,6 +168,10 @@ When('I hover on element with role {string} and name {string}', async ({ basePag
 /**
  * Action: Click
  */
+When('I click element with locator {string}', async ({ basePage }, locator) => {
+  await basePage.clickByLocator(locator)
+})
+
 When('I click element with label {string}', async ({ basePage }, label) => {
   await basePage.clickByLabel(label)
 })
@@ -162,9 +180,9 @@ When('I click element with role {string} and name {string}', async ({ basePage }
   await basePage.clickByRole(role, name)
 })
 
-When('I click element with text {string}', async ({ basePage }, text) => {
-  await basePage.clickByText(text)
-})
+// When('I click element with text {string}', async ({ basePage }, text) => {
+//   await basePage.clickByText(text)
+// })
 
 When('I click link {string}', async ({ basePage }, name) => {
   await basePage.clickByRole('link', name)
@@ -217,6 +235,10 @@ When('I paste from clipboard to element with locator {string}', async ({ basePag
  */
 Then('I should be in home page', async ({ basePage }) => {
   await expect(basePage.getPage()).toHaveURL(basePage.getUrl())
+})
+
+Then('I should be in login page', async ({ loginPage }) => {
+  await expect(loginPage.getPage()).toHaveURL(loginPage.getUrl())
 })
 
 Then('I should be in another page', async ({ basePage }) => {

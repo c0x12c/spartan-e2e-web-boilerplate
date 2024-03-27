@@ -187,27 +187,11 @@ export class BasePage {
   }
 
   /**
-   * Click element with text
-   * @param text text to click
-   */
-  async clickByText(text: string) {
-    await this.page.getByText(text, { exact: true }).first().click()
-  }
-
-  /**
    * Click element with label
    * @param label label of the element
    */
   async clickByLabel(label: string) {
     await this.page.getByLabel(label, { exact: true }).click()
-  }
-
-  /**
-   * Click element with title
-   * @param title title of the element
-   */
-  async clickByTitle(title: string) {
-    await this.page.getByTitle(title).click()
   }
 
   /**
