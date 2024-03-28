@@ -4,7 +4,7 @@ import { BrowserContext, chromium } from '@playwright/test'
 import { initialSetup } from '@synthetixio/synpress/commands/metamask'
 import { setExpectInstance } from '@synthetixio/synpress/commands/playwright'
 import { prepareMetamask } from '@synthetixio/synpress/helpers'
-import { test as base, createBdd } from 'playwright-bdd'
+import { createBdd, test as base } from 'playwright-bdd'
 
 import { BasePage, LoginPage } from '../pages'
 import {

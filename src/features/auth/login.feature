@@ -3,8 +3,8 @@ Feature: Login Suite
   @Login
   Scenario: Login successfully with correct account @login_user_success
     Given I go to login page
-    When I type data with key "user.email" to input with locator "input[name='email']"
-    And I type data with key "user.password" to input with locator "input[name='password']"
+    When I type secret data with key "user.email" to input with locator "input[name='email']"
+    And I type secret data with key "user.password" to input with locator "input[name='password']"
     And I click button with locator "form > button"
     Then I should be in home page
 
