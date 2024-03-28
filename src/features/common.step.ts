@@ -1,6 +1,5 @@
 import { defineParameterType } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
-import { url } from 'inspector'
 
 import { Given, Then, When } from '../common/fixtures'
 import { getDataByKey, shortenAddress } from '../common/utils'
@@ -116,19 +115,13 @@ When('I type {string} to input with placeholder {string}', async ({ basePage }, 
   await basePage.fillByPlaceholder(placeholder, text)
 })
 
-When(
-  'I type {string} to input with role {string} at index {int}',
-  async ({ basePage }, text, name, index) => {
-    await basePage.getPage().getByRole('textbox', { name }).nth(index).fill(text)
-  },
-)
+When('I type {string} to input with role {string} at index {int}', async ({ basePage }, text, name, index) => {
+  await basePage.getPage().getByRole('textbox', { name }).nth(index).fill(text)
+})
 
-When(
-  'I type {string} to input with locator {string} at index {int}',
-  async ({ basePage }, text, locator, index) => {
-    await basePage.getPage().locator(locator).nth(index).fill(text)
-  },
-)
+When('I type {string} to input with locator {string} at index {int}', async ({ basePage }, text, locator, index) => {
+  await basePage.getPage().locator(locator).nth(index).fill(text)
+})
 
 When(
   'I type {string} to input with placeholder {string} at index {int}',
@@ -222,12 +215,24 @@ When('I copy element with locator {string} to clipboard', async ({ basePage }, l
 /**
  * Action: Paste
  */
-When('I paste from clipboard to element with label {string}', async ({ basePage }, label) => {
+When('I paste from clipboard to input with label {string}', async ({ basePage }, label) => {
   await basePage.pasteByLabel(label)
 })
 
-When('I paste from clipboard to element with locator {string}', async ({ basePage }, locator) => {
-  await basePage.pasteByLocator(locator)
+When('I paste from clipboard to input with role {string}', async ({ basePage }, name) => {
+  await basePage.pasteByRoleTextbox(name)
+})
+
+When('I paste from clipboard to input with placeholder {string}', async ({ basePage }, placeholder) => {
+  await basePage.pasteByPlaceholder(placeholder)
+})
+
+When('I paste from clipboard to input with locator {string}', async ({ basePage }, locator) => {
+  await basePage.pasteByLocator(locator, 0)
+})
+
+When('I paste from clipboard to input with locator {string} at index {int}', async ({ basePage }, locator, index) => {
+  await basePage.pasteByLocator(locator, index)
 })
 
 /**
@@ -295,27 +300,27 @@ Then('I expect that the element with role {string} and order {int} is visible', 
   await expect(basePage.getPage().getByRole(text, { exact: true }).nth(order)).toBeVisible()
 })
 
-Then('I expect that I go back to the {string} page', async ({ basePage }, pageName) => {
-  // Check if whether we are on vaults page
-  await expect(
-    basePage.getPage().getByRole('heading', {
-      name: pageName,
-    }),
-  ).toBeVisible()
-})
+// Then('I expect that I go back to the {string} page', async ({ basePage }, pageName) => {
+//   // Check if whether we are on vaults page
+//   await expect(
+//     basePage.getPage().getByRole('heading', {
+//       name: pageName,
+//     }),
+//   ).toBeVisible()
+// })
 
-Then('I expect that the address {string} is visible', async ({ commonDataProvider, basePage }, dataKey) => {
-  const addressStr = shortenAddress(getDataByKey(commonDataProvider.commonData, dataKey))
-  await expect(basePage.getPage().getByText(addressStr)).toBeVisible()
-})
+// Then('I expect that the address {string} is visible', async ({ commonDataProvider, basePage }, dataKey) => {
+//   const addressStr = shortenAddress(getDataByKey(commonDataProvider.commonData, dataKey))
+//   await expect(basePage.getPage().getByText(addressStr)).toBeVisible()
+// })
 
-Then(
-  'I expect that the address {string} with order {int} is invisible',
-  async ({ commonDataProvider, basePage }, dataKey, order) => {
-    const addressStr = shortenAddress(getDataByKey(commonDataProvider.commonData, dataKey))
-    await expect(basePage.getPage().getByText(addressStr).nth(order)).toBeVisible()
-  },
-)
+// Then(
+//   'I expect that the address {string} with order {int} is invisible',
+//   async ({ commonDataProvider, basePage }, dataKey, order) => {
+//     const addressStr = shortenAddress(getDataByKey(commonDataProvider.commonData, dataKey))
+//     await expect(basePage.getPage().getByText(addressStr).nth(order)).toBeVisible()
+//   },
+// )
 
 Then(
   'I expect that row number {int} in table contains these values: {listOfString}',

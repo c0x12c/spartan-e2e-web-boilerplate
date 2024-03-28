@@ -130,10 +130,8 @@ export class BasePage {
    * @param label Label of the element
    */
   async copyByLabel(label: string) {
-    await this.page
-      .getByLabel(label)
-      .textContent()
-      .then((textContent) => navigator.clipboard.writeText(textContent ?? ''))
+    const textContent = await this.page.getByLabel(label).textContent()
+    await this.page.evaluate((textContent) => navigator.clipboard.writeText(textContent ?? ''), textContent)
   }
 
   /**
@@ -141,29 +139,56 @@ export class BasePage {
    * @param locator Locator of the element
    */
   async copyByLocator(locator: string) {
-    await this.page
-      .locator(locator)
-      .textContent()
-      .then((textContent) => navigator.clipboard.writeText(textContent ?? ''))
+    const textContent = await this.page.locator(locator).textContent()
+    await this.page.evaluate((textContent) => navigator.clipboard.writeText(textContent ?? ''), textContent)
   }
 
   /**
    * Paste text from clipboard to an input element by its label
+   * @param label Label of the element
    */
   async pasteByLabel(label: string) {
-    await navigator.clipboard.readText().then(async (textContent) => {
-      await this.page.getByLabel(label).fill(textContent)
-    })
+    await this.page
+      .evaluate(() => navigator.clipboard.readText())
+      .then(async (textContent) => {
+        await this.page.getByLabel(label).fill(textContent)
+      })
+  }
+
+  /**
+   * Paste text from clipboard to an input element by its role and name
+   * @param name Name of the textbox
+   */
+  async pasteByRoleTextbox(name: string) {
+    await this.page
+      .evaluate(() => navigator.clipboard.readText())
+      .then(async (textContent) => {
+        await this.page.getByRole('textbox', { name }).fill(textContent)
+      })
+  }
+
+  /**
+   * Paste text from clipboard to an input element by its placeholder
+   * @param placeholder Placeholder of the element
+   */
+  async pasteByPlaceholder(placeholder: string) {
+    await this.page
+      .evaluate(() => navigator.clipboard.readText())
+      .then(async (textContent) => {
+        await this.page.getByPlaceholder(placeholder, { exact: true }).fill(textContent)
+      })
   }
 
   /**
    * Paste text from clipboard to an input element by its locator
    * @param locator Locator of the element
    */
-  async pasteByLocator(locator: string) {
-    await navigator.clipboard.readText().then(async (textContent) => {
-      await this.page.locator(locator).fill(textContent)
-    })
+  async pasteByLocator(locator: string, index: number = 0) {
+    await this.page
+      .evaluate(() => navigator.clipboard.readText())
+      .then(async (textContent) => {
+        await this.page.locator(locator).nth(index).fill(textContent)
+      })
   }
 
   /**

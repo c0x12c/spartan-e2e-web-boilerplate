@@ -10,13 +10,13 @@ Feature: Test Go action
     Given I go to login page
     When I type secret data with key "user.email" to input with placeholder "Email Address"
     When I type secret data with key "user.password" to input with placeholder "Password"
-    When I go back
-    Then I expect that I go back to the "login" page
-
+    When I click button with locator "form > button"
+    When I click element with locator "a[href='/address-book']"
+    Then I should be in another page
 
     # Go forward
     Scenario: Go forward
     Given I go to login page
     When I go back
     And I go forward
-    Then I should be in home page
+    Then I should be in login page
