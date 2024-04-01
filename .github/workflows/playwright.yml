@@ -1,6 +1,9 @@
 name: Playwright Tests
 on:
   workflow_dispatch:
+  pull_request:
+    branches:
+      - master
 jobs:
   playwright-tests:
     timeout-minutes: 60
@@ -8,68 +11,67 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shardIndex: [1, 2, 3, 4]
-        shardTotal: [4]
+        shardIndex: [1, 2]
+        shardTotal: [2]
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: 18
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
 
-    - name: Install dependencies
-      run: yarn install --frozen-lockfile
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
 
-    - name: Setup secrests json
-      run: |
-        echo "$SECRETS_JSON_B64" > secrets_b64.json
-        base64 -d -i secrets_b64.json > src/secrets.json
-      env:
-        SECRETS_JSON_B64: ${{ secrets.SECRETS_JSON_B64 }}
+      - name: Setup secrests json
+        run: |
+          echo eyJhZG1pbiI6eyJlbWFpbCI6ImFkbWluQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMTIzNDU2In0sInVzZXIiOnsiZW1haWwiOiJ1c2VyQGdtYWlsLmNvbSIsInBhc3N3b3JkIjoiMTIzNDU2In19Cg== | base64 -d > src/secrets.json
+        env:
+          SECRETS_JSON_B64: ${{ secrets.SECRETS_JSON_B64 }}
 
-    - name: Setup env file
-      run: |
-        echo RTJFX0JBU0VfVVJMPWh0dHBzOi8vY2lyY3VpdC5kZXYubnVrZXkuZmkvCkUyRV9TS0lQX1BST0pFQ1RTPQpFMkVfT05MWV9QUk9KRUNUUz0KTUVUQU1BU0tfVkVSU0lPTj0xMC4yNS4wClNFUklBTF9NT0RFPXRydWUKSEVBRExFU1NfTU9ERT10cnVlCk5FRURTX01FVEFNQVNLPWNvbm5lY3Rfd2FsbGV0X3N1Y2Nlc3NmdWxseQpQS19BQ0NPVU5UXzE9ClBLX0FDQ09VTlRfMj0KUEtfQUNDT1VOVF8zPQpQS19XQUxMRVRfMT0KUEtfV0FMTEVUXzI9Cg== | base64 -d > .env
-      env:
-        ENV_PROD_B64: ${{ secrets.ENV_PROD_B64 }}
-            
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      - name: Setup env file
+        run: |
+          echo RTJFX0JBU0VfVVJMPWh0dHBzOi8vY2lyY3VpdC5kZXYubnVrZXkuZmkvCkUyRV9TS0lQX1BST0pFQ1RTPQpFMkVfT05MWV9QUk9KRUNUUz0KTUVUQU1BU0tfVkVSU0lPTj0xMC4yNS4wClNFUklBTF9NT0RFPXRydWUKSEVBRExFU1NfTU9ERT10cnVlCk5FRURTX01FVEFNQVNLPWNvbm5lY3Rfd2FsbGV0X3N1Y2Nlc3NmdWxseQpQS19BQ0NPVU5UXzE9ClBLX0FDQ09VTlRfMj0KUEtfQUNDT1VOVF8zPQpQS19XQUxMRVRfMT0KUEtfV0FMTEVUXzI9Cg== | base64 -d > .env
+        env:
+          ENV_PROD_B64: ${{ secrets.ENV_PROD_B64 }}
 
-    - name: Run Playwright tests
-      run: yarn bddgen && npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      - name: Install Playwright Browsers
+        run: npx playwright install --with-deps
 
-    - name: Upload blob report to GitHub Actions Artifacts
-      if: always()
-      uses: actions/upload-artifact@v4
-      with:
-        name: blob-report-${{ matrix.shardIndex }}
-        path: blob-report
-        retention-days: 1
+      - name: Run Playwright tests
+        run: yarn bddgen && npx playwright test --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+
+      - name: Upload blob report to GitHub Actions Artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blob-report-${{ matrix.shardIndex }}
+          path: blob-report
+          retention-days: 1
 
   merge-reports:
-      # Merge reports after playwright-tests, even if some shards have failed
-      if: always()
-      needs: [playwright-tests]
-  
-      runs-on: ubuntu-latest
-      steps:
+    # Merge reports after playwright-tests, even if some shards have failed
+    if: always()
+    needs: [playwright-tests]
+
+    runs-on: ubuntu-latest
+    steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: 18
       - name: Install dependencies
         run: yarn install --frozen-lockfile
-  
+
       - name: Download blob reports from GitHub Actions Artifacts
         uses: actions/download-artifact@v4
         with:
           path: all-blob-reports
           pattern: blob-report-*
           merge-multiple: true
-  
+
       - name: Merge into HTML Report
-        run: npx playwright merge-reports --reporter html ./all-blob-reports 
-  
+        run: npx playwright merge-reports --reporter html ./all-blob-reports
+
       - name: Upload HTML report
         uses: actions/upload-artifact@v4
         with:
