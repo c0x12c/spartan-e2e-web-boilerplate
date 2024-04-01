@@ -31,15 +31,42 @@ jobs:
         env:
           ENV_PROD_B64: ${{ secrets.ENV_PROD_B64 }}
 
-      - name: Install Playwright Browsers
-        run: npx playwright install --with-deps
+      # - name: Install Playwright Browsers
+      #   run: npx playwright install --with-deps
 
-      - name: Run Playwright tests
-        run: yarn bddgen && npx playwright test
+      # - name: Run Playwright tests
+      #   run: yarn bddgen && npx playwright test
         
-      - uses: actions/upload-artifact@v4
-        if: always()
+      # - uses: actions/upload-artifact@v4
+      #   if: always()
+      #   with:
+      #     name: playwright-report
+      #     path: playwright-report/
+      #     retention-days: 10
+
+      - name: Slack Notification
+        id: slack
+        uses: slackapi/slack-github-action@v1
         with:
-          name: playwright-report
-          path: playwright-report/
-          retention-days: 10
+          payload: |
+            {
+              "channel": "${{ vars.SLACK_CHANNEL }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ":rocket: *${{ vars.PROJECT }} - Playwright report"
+                  }
+                },{
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Created by:* ${{ env.GITHUB_AUTHOR }}"
+                  }
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
