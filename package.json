@@ -35,6 +35,7 @@
   },
   "scripts": {
     "e2e": "yarn bddgen && yarn playwright test",
+    "e2e:ui": "yarn bddgen && yarn playwright test --ui",
     "lint": "tsc && eslint .",
     "lint:fix": "eslint . --fix",
     "prettier": "prettier -w \"{src,mocks,scripts}/**/*.{ts,tsx,js}\"",

@@ -1,4 +1,5 @@
 import path from 'path'
+
 import { parseFileToJson } from '../utils'
 import { CommonData } from './common'
 import { SecretsData } from './secrets'
