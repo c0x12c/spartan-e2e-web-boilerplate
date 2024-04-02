@@ -300,28 +300,6 @@ Then('I expect that the element with role {string} and order {int} is visible', 
   await expect(basePage.getPage().getByRole(text, { exact: true }).nth(order)).toBeVisible()
 })
 
-// Then('I expect that I go back to the {string} page', async ({ basePage }, pageName) => {
-//   // Check if whether we are on vaults page
-//   await expect(
-//     basePage.getPage().getByRole('heading', {
-//       name: pageName,
-//     }),
-//   ).toBeVisible()
-// })
-
-// Then('I expect that the address {string} is visible', async ({ commonDataProvider, basePage }, dataKey) => {
-//   const addressStr = shortenAddress(getDataByKey(commonDataProvider.commonData, dataKey))
-//   await expect(basePage.getPage().getByText(addressStr)).toBeVisible()
-// })
-
-// Then(
-//   'I expect that the address {string} with order {int} is invisible',
-//   async ({ commonDataProvider, basePage }, dataKey, order) => {
-//     const addressStr = shortenAddress(getDataByKey(commonDataProvider.commonData, dataKey))
-//     await expect(basePage.getPage().getByText(addressStr).nth(order)).toBeVisible()
-//   },
-// )
-
 Then(
   'I expect that row number {int} in table contains these values: {listOfString}',
   async ({ basePage }, index, values) => {
