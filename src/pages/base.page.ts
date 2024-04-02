@@ -192,6 +192,14 @@ export class BasePage {
   }
 
   /**
+   * Click on an element by its text
+   * @param text Text of the element
+   */
+  async clickByText(text: string) {
+    await this.page.getByText(text, { exact: true }).click()
+  }
+
+  /**
    * Click on an element by its role and name.
    * @param role Role of the element
    * @param name Accessible name of the element

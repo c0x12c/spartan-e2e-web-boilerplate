@@ -173,9 +173,9 @@ When('I click element with role {string} and name {string}', async ({ basePage }
   await basePage.clickByRole(role, name)
 })
 
-// When('I click element with text {string}', async ({ basePage }, text) => {
-//   await basePage.clickByText(text)
-// })
+When('I click element with text {string}', async ({ basePage }, text) => {
+  await basePage.clickByText(text)
+})
 
 When('I click link {string}', async ({ basePage }, name) => {
   await basePage.clickByRole('link', name)
