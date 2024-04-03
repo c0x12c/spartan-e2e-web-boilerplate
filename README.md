@@ -134,7 +134,7 @@ src
 ├── common.json
 ├── secrets.json
 ```
-## Writing Test
+## Writing E2E Scenario Test
 
 ### Scenario definition
 
@@ -151,9 +151,9 @@ src
   
 ## Working with Data
 
-### Data location
+### Internal Data
 
-- For non-confidential data, it should be placed inside feature file or in `common.json` and it is passed directly to step as paramters. Note that these data should also not be different in different environments, otherwise it should be treated as confidential data.
+- For **non-confidential data**, it should be placed inside feature file or in `common.json` and it is passed directly to step as paramters. Note that these data should also not be different in different environments, otherwise it should be treated as confidential data.
 
 ```gherkin
 Scenario Outline: Sample scenario
@@ -168,7 +168,7 @@ Scenario Outline: Sample scenario
 
 ### External data
 
-- We have 2 types of external data: common and secrets test data.
+- We have 2 types of external data: **common and secrets test data**.
 For common action like click button, input text. We need to define data for each feature in json like:
 ```json
 // File common.json
@@ -179,7 +179,7 @@ For common action like click button, input text. We need to define data for each
     }
 }
 ```
-- For confidential (secrets) data, it should be placed inside an external JSON file `secrets.json`, and then the data is loaded and used in step function of page (see below section).
+- For **confidential (secrets) data**, it should be placed inside an external JSON file `secrets.json`, and then the data is loaded and used in step function of page (see below section).
 To get JSON file for runnning locally, please ask authorized members in team.
 
 ```json
@@ -206,9 +206,9 @@ Scenario: Login successfully with correct account
   Then I should be in home page
 ```
 
-### Implementation
+## Implementation
 After defining the scenario, we have to implement functions that are embedded with the content of the step.
-#### Step function
+### Step function
 - Step: `When I click button with locator "form > button"` will have step function that implemented in `common.step.ts`:
 ```ts
 When('I click button with locator {string} at index {int}', async ({ basePage }, locator, index) => {
@@ -217,7 +217,7 @@ When('I click button with locator {string} at index {int}', async ({ basePage },
 ```
 - Test function should only contain calls to [page objects](https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/) and assertion logic.
 
-#### Page object class
+### Page object class
 
 - A page object class:
   - Located at `pages/<page_name>.page.ts`
@@ -259,7 +259,7 @@ export class UserManagementPage extends BasePage {
   // ...
 ```
 
-#### Fixture
+### Fixture
 
 - After page object class is defined, there should be a corresponding [fixture](https://playwright.dev/docs/test-fixtures) for it (in `common/fixtures.ts`):
 
