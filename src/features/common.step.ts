@@ -2,7 +2,7 @@ import { defineParameterType } from '@cucumber/cucumber'
 import { expect } from '@playwright/test'
 
 import { Given, Then, When } from '../common/fixtures'
-import { getDataByKey, shortenAddress } from '../common/utils'
+import { getDataByKey } from '../common/utils'
 
 defineParameterType({
   name: 'listOfString',
