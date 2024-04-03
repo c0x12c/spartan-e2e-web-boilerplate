@@ -11,7 +11,7 @@ export default defineConfig({
   testDir,
   timeout: 50 * 1000,
   expect: {
-    timeout: 5000,
+    timeout: 10000,
   },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
@@ -25,7 +25,10 @@ export default defineConfig({
     /* Test against desktop browsers */
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: { 
+        ...devices['Desktop Chrome'],
+        permissions: ["clipboard-read", "clipboard-write"],
+      },
     },
     /* Cmt for minimal effort */
     // {

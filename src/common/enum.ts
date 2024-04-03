@@ -28,7 +28,7 @@ export enum DATA_PATHS {
 }
 
 export enum LOGIN_PAGE {
-  PATH = '/auth',
+  PATH = '/auth?tab=login',
   KEY_USERNAME = 'email',
   KEY_PASSWORD = 'password',
   INPUT_USERNAME = 'Email',
