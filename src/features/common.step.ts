@@ -83,7 +83,6 @@ When(
   'I type secret data with key {string} to input with role {string}',
   async ({ secretDataProvider, basePage }, dataKey, inputName) => {
     const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
-    console.log(dataContent)
     await basePage.fillByRoleTextbox(inputName, dataContent)
   },
 )
@@ -92,7 +91,6 @@ When(
   'I type secret data with key {string} to input with locator {string}',
   async ({ secretDataProvider, basePage }, dataKey, locator) => {
     const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
-    console.log(dataContent)
     await basePage.fillByLocator(locator, dataContent)
   },
 )
