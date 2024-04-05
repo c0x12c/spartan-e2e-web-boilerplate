@@ -4,28 +4,26 @@ End-to-end testing framework for web dashboard, using Playwright and Cucumber.
 
 ## Getting started
 
-### Installation
-
+### Prerequisites
+- First of all, git clone e2e boilerplate:
+```sh
+git clone git@github.com:c0x12c/spartan-e2e-web-boilerplate.git
+```
 - Install dependencies
-
 ```sh
 yarn install
 ```
-
 - Install Playwright browser
-
 ```sh
 npx playwright install
 ```
-
-- The environment variables that start with `E2E_` in `.env.example` is required for success execution.
+- The environment variables starting with `E2E_` in `.env.example` are required for success execution.
   - On local, these environment variables should be placed inside file `.env`, e.g.
 
 ```sh
 E2E_BASE_URL="https://circuit.dev.nukey.fi"
 E2E_SKIP_PROJECTS=
 E2E_ONLY_PROJECTS=
-E2E_DATA_USER=
 E2E_TAGS=
 ```
 
@@ -39,7 +37,6 @@ E2E_TAGS=
 | E2E_SKIP_PROJECTS    | Projects to skip (all available projects are in `playwright.config.ts`).                                                                                                                                                                          |
 | E2E_ONLY_PROJECTS    | Projects to be executed (projects that is not included will not be executed). This option is valid only if `E2E_SKIP_PROJECTS` is not set.                                                                                                        |
 | E2E_TAGS             | Cucumber tag expression of scenarios to be executed on **CI environment**.                                                                                                                                                                        |
-| E2E_DATA_<data_name> | Test data file content encoded in base64, with <data_name> specified in `DATA_PATHS` of file `common/enum.ts`. If this variable is not set, the file path in enum value (e.g. `user.local.json`) relative to folder `data/` will be used instead. |
 
 </details>
 
@@ -112,41 +109,115 @@ yarn e2e
 yarn e2e:tag
 ```
 
-## Writing test script
+## Project Directory
+```sh
+src
+├── common
+│   ├── constant.ts
+│   ├── enum.ts
+│   ├── fixtures.ts
+│   ├── types
+│   │   ├── common.ts
+│   │   ├── data.ts
+│   │   ├── exception.ts
+│   │   └── secrets.ts
+│   └── utils.ts
+├── features
+│   ├── <group>
+│   │   ├── <group>.data.ts
+│   │   ├── <group>.feature
+│   │   └── <group>.step.ts
+│   ├── common.step.ts
+├── pages
+│   ├── base.page.ts
+│   ├── <group>.page.ts
+├── common.json
+├── secrets.json
+```
+## Writing E2E Scenario Test
 
 ### Scenario definition
 
 - Scenarios are defined in feature file `*.feature` under folder `features/<group>`.
   - `<group>` is the group of features, or it can be the name of page where these scenarios will be applied.
 
-- The common steps should be used if applicable (see `features/common.step.ts`)
-
-- If there is a new step, it should follow the naming convention:
+- The common steps should be used if applicable (see `features/common.step.ts`). If there is a new step, it should follow the naming convention:
   - It should be unique.
   - Therefore, it should contain the context of step like the feature description or part of page that will be affected by that step.
     - e.g. `I select random FROM date in UM Filter modal`
       - `UM` is the feature (User management)
       - `Filter modal` is where the action *select FROM date* occurs
+- The feature step (the step can be only executed in specified scenario) should be placed in `features/<group>/<group>.step.ts`. For example: [Login Feature](src/features/auth/)
+  
+## Working with Data
 
-### Step implementation
+### Internal Data
 
-#### Step function
+- For **non-confidential data**, it should be placed inside feature file or in `common.json` and it is passed directly to step as paramters. Note that these data should also not be different in different environments, otherwise it should be treated as confidential data.
 
-- Path to step function: `features/<group>/steps/<feature_name>.step.ts`
-  - `<feature_name>` can be same as `<group>` if these steps are common in group of features
-- Test function should only contain calls to [page objects](https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/) and assertion logic.
-
-```ts
-When('I click button {string}', async ({ basePage }, name) => {
-  await basePage.clickByRole('button', name);
-});
-
-Then('I should be in home page', async ({ basePage }) => {
-  await expect(basePage.getPage()).toHaveURL(new RegExp(basePage.getUrl()));
-});
+```gherkin
+Scenario Outline: Sample scenario
+    Given I go to homepage
+    And I click sort by "<criteria>"
+    Then Items in homepage should be sorted by "<criteria>"
+    Examples:
+      | criteria |
+      | name     |
+      | date     |
 ```
 
-#### Page object class
+### External data
+
+- We have 2 types of external data: **common and secrets test data**.
+For common action like click button, input text. We need to define data for each feature in json like:
+```json
+// File common.json
+{
+    "address": {
+        "name": "E2E4",
+        "address": "0x8881bA8f386431661C90D89EEB87C15f0Ea85FbF"
+    }
+}
+```
+- For **confidential (secrets) data**, it should be placed inside an external JSON file `secrets.json`, and then the data is loaded and used in step function of page (see below section).
+To get JSON file for runnning locally, please ask authorized members in team.
+
+```json
+// File secrets.json
+{
+  "admin": {
+    "email": "admin@gmail.com",
+    "password": "password"
+  },
+  "user": {
+    "email": "user@gmail.com",
+    "password": "password"
+  }
+}
+```
+- To use the data in a scenario, refer to its name in the JSON file depending on whether it's secret or common.
+
+```gherkin
+Scenario: Login successfully with correct account
+  Given I go to login page
+  When I type secret data with key "user.email" to input with locator "input[name='email']"
+  And I type secret data with key "user.password" to input with locator "input[name='password']"
+  And I click button with locator "form > button"
+  Then I should be in home page
+```
+
+## Implementation
+After defining the scenario, we have to implement functions that are embedded with the content of the step.
+### Step function
+- Step: `When I click button with locator "form > button"` will have step function that implemented in `common.step.ts`:
+```ts
+When('I click button with locator {string} at index {int}', async ({ basePage }, locator, index) => {
+  await basePage.clickByLocator(locator, index)
+})
+```
+- Test function should only contain calls to [page objects](https://www.selenium.dev/documentation/test_practices/encouraged/page_object_models/) and assertion logic.
+
+### Page object class
 
 - A page object class:
   - Located at `pages/<page_name>.page.ts`
@@ -188,7 +259,7 @@ export class UserManagementPage extends BasePage {
   // ...
 ```
 
-#### Fixture
+### Fixture
 
 - After page object class is defined, there should be a corresponding [fixture](https://playwright.dev/docs/test-fixtures) for it (in `common/fixtures.ts`):
 
@@ -236,93 +307,15 @@ When(
 );
 ```
 
-- **Shared data between steps**: There is a dedicated fixture `scenarioData` for storing data between steps *in a scenario (test)*.
+- **Shared data between steps**: There is a dedicated fixture `secretDataProvider` or `commonDataProvider` for storing secret and common data between steps in a scenario.
 
 ```ts
-Given('I load data {string}', async ({ scenarioData }, dataName) => {
-  // store 
-  scenarioData.testData = loadData(dataName);
-});
-
 When(
-  'I type data with key {string} to input {string}',
-  async ({ scenarioData, basePage }, dataKey, inputName) => {
-    // testData stored with above step can be used in this step
-    const dataContent = getTestDataByKey(scenarioData.testData, dataKey);
-    // ...
+  'I type secret data with key {string} to input with role {string}',
+  async ({ secretDataProvider, basePage }, dataKey, inputName) => {
+    const dataContent = getDataByKey(secretDataProvider.secretsData ?? dataKey, dataKey) ?? dataKey
+    await basePage.fillByRoleTextbox(inputName, dataContent)
   },
-);
+)
 ```
-
-<details>
-
-<summary> scenarioData definition </summary>
-
 A new shared data should be defined as an attribute of class `ScenarioData` (in `common/types/data.ts`)
-
-</details>
-
-## Working with test data
-
-### Data location
-
-- For non-confidential data, it should be placed inside feature file and it is passed directly to step as paramters. Note that these data should also not be different in different environments, otherwise it should be treated as confidential data.
-
-```gherkin
-Scenario Outline: Sample scenario
-    Given I go to homepage
-    And I click sort by "<criteria>"
-    Then Items in homepage should be sorted by "<criteria>"
-    Examples:
-      | criteria |
-      | name     |
-      | date     |
-```
-
-- For confidential data, it should be placed inside an external JSON file `secrets.json`, and then the data is loaded and used in step function of page (see below section).
-To get JSON file for runnning locally, please ask authorized members in team.
-
-```json
-// File secrets.json
-{
-  "admin": {
-    "email": "admin@gmail.com",
-    "password": "password"
-  },
-  "user": {
-    "email": "user@gmail.com",
-    "password": "password"
-  }
-}
-```
-
-### External data
-
-- We have 2 types of test data: common and feature test data.
-For common action like click button, input text. We need to define data for each feature in json like:
-```json
-// File common.json
-{
-    "address": {
-        "name": "E2E4",
-        "address": "0x8881bA8f386431661C90D89EEB87C15f0Ea85FbF"
-    }
-}
-```
-
-- To use the data in a scenario, refer to its name in common data steps
-
-```gherkin
-Scenario: Login
-    Given I load data "USER"
-    And I go to login page
-    When I type data with key "admin.username" to input with role "Email"
-    And I type data with key "admin.password" to input with role "Password"
-    And I click button "Login"
-    Then I should be in home page
-```
-
-
-- **Login as a step**: `I login as user`. It also re-uses the session within the same execution worker.
-
-- External data structure (type) should be placed in each feature packages
