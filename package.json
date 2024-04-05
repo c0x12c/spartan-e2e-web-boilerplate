@@ -1,11 +1,18 @@
 {
-  "name": "spartan-e2e-web-test-boilerplate",
+  "name": "@spartan/e2e-playwright",
   "version": "1.0.0",
-  "description": "e2e-web-test-boilerplate",
+  "description": "Playwright and Cucumber were used in this package to do end-to-end testing. It included some common steps that could be applied to other projects that reduce effort to rewrite these steps.",
   "repository": "git@github.com:c0x12c/spartan-e2e-web-test-boilerplate.git",
   "private": true,
   "engines": {
     "node": ">=18.0.0"
+  },
+  "main": "./dist/page.js",
+  "module": "./dist/page.mjs",
+  "types": "./dist/page.d.ts",
+  "exports": {
+    ".": "./dist/page.js",
+    "./step": "./dist/step.js"
   },
   "dependencies": {
     "@cucumber/cucumber": "^10.3.1",
@@ -32,7 +39,8 @@
   },
   "devDependencies": {
     "@types/lodash": "^4.14.202",
-    "@types/node": "^20.11.19"
+    "@types/node": "^20.11.19",
+    "tsup": "^8.0.2"
   },
   "scripts": {
     "e2e": "yarn bddgen && yarn playwright test",
@@ -46,7 +54,8 @@
     "lint:fix": "eslint . --fix",
     "prettier": "prettier -w \"{src,mocks,scripts}/**/*.{ts,tsx,js}\"",
     "fix": "yarn lint:fix && ts-prune && yarn prettier",
-    "pre-commit": "lint-staged && tsc"
+    "pre-commit": "lint-staged && tsc",
+    "build": "tsup"
   },
   "browserslist": {
     "production": [

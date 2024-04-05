@@ -25,9 +25,9 @@ export default defineConfig({
     /* Test against desktop browsers */
     {
       name: 'chromium',
-      use: { 
+      use: {
         ...devices['Desktop Chrome'],
-        permissions: ["clipboard-read", "clipboard-write"],
+        permissions: ['clipboard-read', 'clipboard-write'],
       },
     },
     /* Cmt for minimal effort */
