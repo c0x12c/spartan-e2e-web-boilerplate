@@ -1,0 +1,46 @@
+{
+  "name": "@spartan/e2e-example-consumer",
+  "version": "1.0.0",
+  "repository": "git@github.com:c0x12c/spartan-e2e-web-test-boilerplate.git",
+  "private": true,
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "@cucumber/cucumber": "^10.3.0",
+    "@playwright/test": "1.42.1",
+    "@spartan/e2e-playwright": "../e2e-playwright-library",
+    "dotenv": "^16.4.5",
+    "env-cmd": "^10.1.0",
+    "loadsh": "^0.0.4",
+    "node-fetch": "^3.3.2",
+    "playwright-bdd": "^6.0.3",
+    "typescript": "^4.9.5"
+  },
+  "devDependencies": {
+    "@types/lodash": "^4.14.202",
+    "@types/node": "^20.11.19"
+  },
+  "scripts": {
+    "e2e:ui": "yarn bddgen && yarn playwright test --ui"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "lint-staged": {
+    "*.{js,ts,tsx}": [
+      "eslint --cache --fix"
+    ],
+    "*.js": "eslint --cache --fix"
+  },
+  "packageManager": "yarn@4.1.0"
+}

@@ -1,0 +1,22 @@
+{
+    "address": {
+        "name": "E2E4",
+        "address": "0x8881bA8f386431661C90D89EEB87C15f0Ea85FbF",
+        "chain": "Polygon Mumbai",
+        "updateName": "E2E4 Update",
+        "updateAddress": "0x47D57A3a23d087417f8C01aeb39c30737b4a4914",
+        "emptyName": "",
+        "emptyAddress": "",
+        "emptyChain": ""
+    },
+    "rwa": {
+        "address_name": "E2E4",
+        "address": "0x8881bA8f386431661C90D89EEB87C15f0Ea85FbF",
+        "delete_address_name": "E2E4 Delete",
+        "delete_address": "0xa25f4226E849924DD58d419643A027Cbc2D0D9B1",
+        "edit_name": "A8f",
+        "edit_name_edited": "A8f_Edited",
+        "edit_address": "0x74050049BE5e2121aE510FFFD753aa6c2C5bDA8f",
+        "invalidAddress": "abc"
+    }
+}
