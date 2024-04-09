@@ -34,16 +34,15 @@ This project demonstrate how to install the `@spartan/e2e-playwright` library
     ```
 - Build the package
     ```sh
-        cd spartan-e2e-web-boilerplate
-        yarn build
+    cd spartan-e2e-web-boilerplate
+    yarn build
     ```
 - Packaging the library
     ```sh
     yarn package
     ```
-- It will create a `package.tgz` file
+    It will create a `package.tgz` file, then let move on the consumer project
 
-Let move on to the consumer project
 - Install dependencies
     ```sh
     yarn install
@@ -54,14 +53,18 @@ Let move on to the consumer project
     ```
 
 ### Install from registry (TBU)
+
+- Install the e2e-playwright package
     ```sh
     yarn add  @spartan/e2e-playwright@1.0.0
     ```
 ## Modify code project
+
 - In the file `src/features/common.step.ts`, export `common steps` from the e2e library:
     ```typescript
     export * as commonSteps from '@spartan/e2e-playwright/step'
     ```
+
 - In the file `src/pages/base.page.ts`, export new class extending from `BasePage` class from the e2e library:
     ```typescript
     import { BasePage as Page } from "@spartan/e2e-playwright";
@@ -70,6 +73,7 @@ Let move on to the consumer project
     ```
 
 ## Run
+
 - To run the demonstration
     ```sh
     yarn e2e:ui
