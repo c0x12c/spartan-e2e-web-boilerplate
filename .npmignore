@@ -3,7 +3,7 @@ examples
 node_modules
 playwright-report
 src
-test-result
+test-results
 
 
 # Environment
@@ -22,6 +22,9 @@ yarn.lock
 
 # Pack
 *.tgz
+
+# Features gen
+.features-gen
 
 # Other
 .github

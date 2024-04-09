@@ -1,9 +1,11 @@
 {
-  "name": "@spartan/e2e-playwright",
+  "name": "@spartan-org/e2e-playwright",
   "version": "1.0.0",
   "description": "Playwright and Cucumber were used in this package to do end-to-end testing. It included some common steps that could be applied to other projects that reduce effort to rewrite these steps.",
-  "repository": "git@github.com:c0x12c/spartan-e2e-web-test-boilerplate.git",
-  "private": true,
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/c0x12c/spartan-e2e-web-test-boilerplate.git"
+  },
   "engines": {
     "node": ">=18.0.0"
   },

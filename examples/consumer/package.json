@@ -8,7 +8,7 @@
   "dependencies": {
     "@cucumber/cucumber": "^10.3.0",
     "@playwright/test": "^1.42.1",
-    "@spartan/e2e-playwright": "../../package.tgz",
+    "@spartan-org/e2e-playwright": "^1.0.0",
     "@types/lodash": "^4.14.202",
     "@types/node": "^20.11.19",
     "loadsh": "^0.0.4",

@@ -1,1 +1,1 @@
-export * as commonSteps from '@spartan/e2e-playwright/step'
+export * as commonSteps from '@spartan-org/e2e-playwright/step';
