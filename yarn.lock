@@ -1207,9 +1207,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@spartan/e2e-playwright@workspace:.":
+"@spartan-org/e2e-playwright@workspace:.":
   version: 0.0.0-use.local
-  resolution: "@spartan/e2e-playwright@workspace:."
+  resolution: "@spartan-org/e2e-playwright@workspace:."
   dependencies:
     "@cucumber/cucumber": "npm:^10.3.0"
     "@playwright/test": "npm:^1.42.1"

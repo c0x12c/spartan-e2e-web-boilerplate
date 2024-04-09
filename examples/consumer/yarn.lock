@@ -841,27 +841,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@spartan/e2e-example-consumer@workspace:.":
-  version: 0.0.0-use.local
-  resolution: "@spartan/e2e-example-consumer@workspace:."
-  dependencies:
-    "@cucumber/cucumber": "npm:^10.3.0"
-    "@playwright/test": "npm:^1.42.1"
-    "@spartan/e2e-playwright": ../../package.tgz
-    "@types/lodash": "npm:^4.14.202"
-    "@types/node": "npm:^20.11.19"
-    dotenv: "npm:^16.4.5"
-    env-cmd: "npm:^10.1.0"
-    loadsh: "npm:^0.0.4"
-    node-fetch: "npm:^3.3.2"
-    playwright-bdd: "npm:^6.0.3"
-    typescript: "npm:^4.9.5"
-  languageName: unknown
-  linkType: soft
-
-"@spartan/e2e-playwright@file:../../package.tgz::locator=%40spartan%2Fe2e-example-consumer%40workspace%3A.":
+"@spartan-org/e2e-playwright@npm:^1.0.0":
   version: 1.0.0
-  resolution: "@spartan/e2e-playwright@file:../../package.tgz#../../package.tgz::hash=ee26ed&locator=%40spartan%2Fe2e-example-consumer%40workspace%3A."
+  resolution: "@spartan-org/e2e-playwright@npm:1.0.0"
   dependencies:
     "@cucumber/cucumber": "npm:^10.3.0"
     "@playwright/test": "npm:^1.42.1"
@@ -872,9 +854,27 @@ __metadata:
     loadsh: "npm:^0.0.4"
     node-fetch: "npm:^3.3.2"
     playwright-bdd: "npm:^6.0.3"
-  checksum: 10c0/5fc5fb1c6c20095706712a391a5a65ea4b99ff965af969c8cd683bb4e580e844588083774b596717aa73c8c0c0fb388a7e920a42a91affa92cd02438256f421c
+  checksum: 10c0/214da73362abf8fca20c8892eccfbf1603245147c55dd4ed80c79a3659be1b93c1f192a496a793a4f66058c5fec140815a6671b548e0f9fc51b9017fccd0ace9
   languageName: node
   linkType: hard
+
+"@spartan/e2e-example-consumer@workspace:.":
+  version: 0.0.0-use.local
+  resolution: "@spartan/e2e-example-consumer@workspace:."
+  dependencies:
+    "@cucumber/cucumber": "npm:^10.3.0"
+    "@playwright/test": "npm:^1.42.1"
+    "@spartan-org/e2e-playwright": "npm:^1.0.0"
+    "@types/lodash": "npm:^4.14.202"
+    "@types/node": "npm:^20.11.19"
+    dotenv: "npm:^16.4.5"
+    env-cmd: "npm:^10.1.0"
+    loadsh: "npm:^0.0.4"
+    node-fetch: "npm:^3.3.2"
+    playwright-bdd: "npm:^6.0.3"
+    typescript: "npm:^4.9.5"
+  languageName: unknown
+  linkType: soft
 
 "@synthetixio/synpress@npm:^3.7.2-beta.10":
   version: 3.7.2-beta.10
