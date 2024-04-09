@@ -109,6 +109,37 @@ yarn e2e
 yarn e2e:tag
 ```
 
+### Build library
+- Bundle two files `src/features/common.step.ts` and `src/pages/base.page.ts` which can be reused
+  ```sh
+  yarn build
+  ```
+- The `dist` folder will created as:
+  ```sh
+  dist
+  ├── page.d.mts
+  ├── page.d.ts
+  ├── page.js
+  ├── page.mjs
+  ├── step.d.mts
+  ├── step.d.ts
+  ├── step.js
+  ├── step.mjs
+  ```
+- In the file `package.json`, export the entry as:
+  ```json
+  {
+    "main": "./dist/page.js",
+    "module": "./dist/page.mjs",
+    "types": "./dist/page.d.ts",
+    "files": ["dist"],
+    "exports": {
+      ".": "./dist/page.js",
+      "./step": "./dist/step.js"
+    },
+  }
+  ```
+
 ## Project Directory
 ```sh
 src

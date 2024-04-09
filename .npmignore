@@ -1,0 +1,32 @@
+# Folder
+examples
+node_modules
+playwright-report
+src
+test-result
+
+
+# Environment
+.env
+.env.examples
+
+# Lint
+.eslintrc.js
+.prettierrc
+
+# Configuration
+playwright.config.ts
+tsconfig.ts
+tsup.config.ts
+yarn.lock
+
+# Pack
+*.tgz
+
+# Other
+.github
+.husky
+.vscode
+.yarn
+.yarnrc.yaml
+.gitignore

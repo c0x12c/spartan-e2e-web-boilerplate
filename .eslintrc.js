@@ -20,7 +20,14 @@ module.exports = {
     node: true,
     jest: true,
   },
-  ignorePatterns: ['.eslintrc.js', 'tsconfig.json'],
+  ignorePatterns: [
+    '.eslintrc.js',
+    'tsconfig.json',
+    'tsup.config.ts',
+    'dist',
+    'playwright-report',
+    'examples',
+  ],
   rules: {
     'simple-import-sort/imports': 'error',
     'simple-import-sort/exports': 'error',
