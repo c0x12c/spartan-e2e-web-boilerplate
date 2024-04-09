@@ -1,1 +1,0 @@
-# spartan-e2e-example-consumer
