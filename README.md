@@ -21,7 +21,7 @@ npx playwright install
   - On local, these environment variables should be placed inside file `.env`, e.g.
 
 ```sh
-E2E_BASE_URL="https://circuit.dev.nukey.fi"
+E2E_BASE_URL=
 E2E_SKIP_PROJECTS=
 E2E_ONLY_PROJECTS=
 E2E_TAGS=

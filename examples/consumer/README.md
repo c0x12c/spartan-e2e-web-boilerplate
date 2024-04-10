@@ -1,5 +1,5 @@
 # spartan-e2e-example-consumer
-This project demonstrate how to install the `@spartan/e2e-playwright` library
+This project demonstrate how to install the `@spartan-org/e2e-playwright` library
 - First of all, let create a new project following the structure of the boilerplate repositoty
     ```sh
     src
@@ -52,22 +52,22 @@ This project demonstrate how to install the `@spartan/e2e-playwright` library
     yarn add ../../package.tgz
     ```
 
-### Install from registry (TBU)
+### Install from registry
 
 - Install the e2e-playwright package
     ```sh
-    yarn add  @spartan/e2e-playwright@1.0.0
+    yarn add  @spartan-org/e2e-playwright@1.0.0
     ```
 ## Modify code project
 
 - In the file `src/features/common.step.ts`, export `common steps` from the e2e library:
     ```typescript
-    export * as commonSteps from '@spartan/e2e-playwright/step'
+    export * as commonSteps from '@spartan-org/e2e-playwright/step'
     ```
 
 - In the file `src/pages/base.page.ts`, export new class extending from `BasePage` class from the e2e library:
     ```typescript
-    import { BasePage as Page } from "@spartan/e2e-playwright";
+    import { BasePage as Page } from "@spartan-org/e2e-playwright";
 
     export class BasePage extends Page {}
     ```
