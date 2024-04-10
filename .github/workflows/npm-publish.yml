@@ -22,12 +22,8 @@ jobs:
       - name: npm publish
         run: |
           npm install
-          npm publish --access public
+          npm publish --access public > npm_publish.log 2>&1
         with:
           env:
             NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
-  report:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Send Slack Message
 
