@@ -47,8 +47,12 @@ jobs:
       - name: 'Extract info'
         run: |
           echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
-          echo "${{ steps.package.outputs.content }}"
-          echo "PUBLISH_LOG=$(cat ${{ steps.npm-publish.outputs.content }})" >> "$GITHUB_ENV"
+          PUBLISH_LOG=$(cat ${{ steps.npm-publish.outputs.value }})
+          PUBLISH_LOG="${PUBLISHLOG//'%'/'%25'}"
+          PUBLISH_LOG="${PUBLISHLOG//$'\n'/'%0A'}"
+          PUBLISH_LOG="${PUBLISHLOG//$'\r'/'%0D'}"
+          PUBLISH_LOG="\`\`\`${PUBLISH_LOG}\`\`\`"
+          echo "PUBLISH_LOG=$PUBLISH_LOG" >> "$GITHUB_ENV"
           echo "PACKAGE_VERSION=$(npm version --json | grep '@spartan-org/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
           
       #- name: Run install
