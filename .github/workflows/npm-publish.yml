@@ -47,8 +47,7 @@ jobs:
       - name: 'Extract info'
         run: |
           echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
-          echo "${{ toJson(steps.npm-publish.outputs.content) }}"
-          echo "PUBLISH_LOG=$(echo \"\`\`\`$(echo "${{ toJson(steps.npm-publish.outputs.content) }}")\`\`\`\")" >> $GITHUB_ENV
+          echo "PUBLISH_LOG=$(echo \"\`\`\`$(echo "${{ steps.npm-publish.outputs.content//$'\n'/'%0A' }}")\`\`\`\")" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$(npm version --json | grep '@spartan-org/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
           
       #- name: Run install
@@ -95,16 +94,18 @@ jobs:
                   }
                 },
                 {
-                  "type": "divider"
-                },
-                {
-                  "type": "button",
-                  "text": {
-                    "type": "plain_text",
-                    "text": "View Run"
-                  },
-                  "style": "primary",
-                  "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                  "type": "actions",
+                  "elements": [
+                    {
+                      "type": "button",
+                      "text": {
+                        "type": "plain_text",
+                        "text": "View Run"
+                      },
+                      "style": "primary",
+                      "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                    }
+                  ]
                 }
               ]
             }
