@@ -47,6 +47,7 @@ jobs:
       - name: 'Extract info'
         run: |
           echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
+          echo "${{ toJson(steps.npm-publish.outputs.content) }}"
           echo "PUBLISH_LOG=$(echo \"\`\`\`$(echo "${{ toJson(steps.npm-publish.outputs.content) }}")\`\`\`\")" >> $GITHUB_ENV
           echo "PACKAGE_VERSION=$(npm version --json | grep '@spartan-org/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
           
