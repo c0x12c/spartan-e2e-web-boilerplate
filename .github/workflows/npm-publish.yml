@@ -89,7 +89,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "\`\`\`${{ toJson(steps.npm-publish.outputs.content) }}\`\`\`"
+                    "text": ${{toJson("\`\`\`" + steps.npm-publish.outputs.content + "\`\`\`")}}
                   }
                 },
                 {
