@@ -4,26 +4,109 @@ on:
   pull_request:
     branches:
       - master
-
+  #push:
+  #  tags:
+  #    - '*'
+  #  paths:
+  #    - 'src/**/*'
+  #    - 'yarn.lock'
 env:
+  PACKAGE_URL: ${{ vars.PACKAGE_URL }}
+  SLACK_CHANNEL: ${{ vars.SLACK_CHANNEL }}
   PROJECT_URL: ${{ vars.PROJECT_URL }}
-  GITHUB_TOKEN: $({ secrets.PAT })
-  NPM_TOKEN: $({ secrets.NPM_TOKEN_DEV})
+  GITHUB_TOKEN: ${{ secrets.PAT }}
+  NPM_TOKEN: ${{ secrets.NPM_TOKEN_DEV}}
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
 
 jobs:
   publish-npm:
+
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: 'read'
+      id-token: 'write'
+
     steps:
-      - name: Setup Node.js
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: '18'
-      - name: npm publish
-        run: |
-          npm install
-          npm publish --access public > npm_publish.log 2>&1
-        with:
-          env:
-            NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+          cache: 'yarn'
+          registry-url: "https://registry.npmjs.org"
 
+      - name: Read Resources
+        id: npm-publish
+        uses: juliangruber/read-file-action@v1
+        with:
+          path: ./.github/resources/npm_publish.txt
+      
+      - name: 'Extract info'
+        run: |
+          echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
+          echo "PUBLISH_LOG=$(echo \"\`\`\`$(echo "${{ toJson(steps.npm-publish.outputs.content) }}")\`\`\`\")" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$(npm version --json | grep '@spartan-org/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
+          
+      #- name: Run install
+      #  run: yarn install --frozen-lockfile
+
+      #- name: Build bundle
+      #  uses: borales/actions-yarn@v4
+      #  with:
+      #   cmd: build
+  
+      #- name: NPM publish
+      #  run: |
+      #    npm publish --access public --scope=@spartan-org >> npm_publish.log 2>&1
+      #  env:
+      #    NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+
+      - name: Slack Notification
+        id: slack
+        uses: slackapi/slack-github-action@v1
+        with:
+          payload: |
+            {
+              "channel": "${{ vars.SLACK_CHANNEL }}",
+              "blocks": [
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Release version*: <${{env.PACKAGE_URL}}|Package @spartan-org/e2e-playwright]>. Version: ${{ env.PACKAGE_VERSION }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": "*Created by:* ${{ env.GITHUB_AUTHOR }}"
+                  }
+                },
+                {
+                  "type": "section",
+                  "text": {
+                    "type": "mrkdwn",
+                    "text": ${{ env.PUBLISH_LOG }}
+                  }
+                },
+                {
+                  "type": "divider"
+                },
+                {
+                  "type": "button",
+                  "text": {
+                    "type": "plain_text",
+                    "text": "View Run"
+                  },
+                  "style": "primary",
+                  "url": "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+                }
+              ]
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ env.SLACK_WEBHOOK_URL }}
+          SLACK_WEBHOOK_TYPE: INCOMING_WEBHOOK
