@@ -47,7 +47,7 @@ jobs:
       - name: 'Extract info'
         run: |
           echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
-          PUBLISH_LOG=$(cat ${{ steps.npm-publish.outputs.value }})
+          PUBLISH_LOG=$(cat ${{ steps.npm-publish.outputs.content }})
           PUBLISH_LOG="${PUBLISHLOG//'%'/'%25'}"
           PUBLISH_LOG="${PUBLISHLOG//$'\n'/'%0A'}"
           PUBLISH_LOG="${PUBLISHLOG//$'\r'/'%0D'}"
