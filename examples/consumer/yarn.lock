@@ -841,9 +841,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@spartan-org/e2e-playwright@npm:^1.0.0":
+"@c0x12c/e2e-playwright@npm:^1.0.0":
   version: 1.0.0
-  resolution: "@spartan-org/e2e-playwright@npm:1.0.0"
+  resolution: "@c0x12c/e2e-playwright@npm:1.0.0"
   dependencies:
     "@cucumber/cucumber": "npm:^10.3.0"
     "@playwright/test": "npm:^1.42.1"
@@ -864,7 +864,7 @@ __metadata:
   dependencies:
     "@cucumber/cucumber": "npm:^10.3.0"
     "@playwright/test": "npm:^1.42.1"
-    "@spartan-org/e2e-playwright": "npm:^1.0.0"
+    "@c0x12c/e2e-playwright": "npm:^1.0.0"
     "@types/lodash": "npm:^4.14.202"
     "@types/node": "npm:^20.11.19"
     dotenv: "npm:^16.4.5"
