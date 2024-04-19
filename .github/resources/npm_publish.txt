@@ -1,4 +1,5 @@
 npm notice 
+npm notice 📦  @spartan-org/e2e-playwright@1.0.5
 npm notice === Tarball Contents === 
 npm notice 11.8kB  README.md                    
 npm notice 5.4kB   dist/base.page-yc-lay67.d.mts

@@ -39,18 +39,6 @@ jobs:
           cache: 'yarn'
           registry-url: "https://registry.npmjs.org"
 
-      - name: Read Resources
-        id: npm-publish
-        uses: juliangruber/read-file-action@v1
-        with:
-          path: ./.github/resources/npm_publish.txt
-      
-      - name: 'Extract info'
-        run: |
-          echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
-          echo "PUBLISH_LOG=${{steps.npm-publish.outputs.content}}" >> "$GITHUB_ENV"
-          echo "PACKAGE_VERSION=$(npm version --json | grep '@c0x12c/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
-          
       #- name: Run install
       #  run: yarn install --frozen-lockfile
 
@@ -63,8 +51,23 @@ jobs:
       #  run: |
       #    npm publish --access public --scope=@c0x12c >> npm_publish.log 2>&1
       #  env:
-      #    NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
+      #    NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}          
 
+      - name: Read Resources
+        id: npm-publish
+        run: |
+          EOF=$(dd if=/dev/urandom bs=15 count=1 status=none | base64)
+          publish_log=$(cat ./.github/resources/npm_publish.txt)
+          PUBLISH_LOG=$publish_log
+          echo "PUBLISH_LOG<<$EOF" >> $GITHUB_ENV
+          echo "$PUBLISH_LOG" >> $GITHUB_ENV
+          echo "$EOF" >> $GITHUB_ENV
+      
+      - name: 'Extract info'
+        run: |
+          echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
+          echo "PACKAGE_VERSION=$(npm version --json | grep '@c0x12c/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
+          
       - name: Slack Notification
         id: slack
         uses: slackapi/slack-github-action@v1
