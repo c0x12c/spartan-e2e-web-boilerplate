@@ -17,6 +17,7 @@ env:
   GITHUB_TOKEN: ${{ secrets.PAT }}
   NPM_TOKEN: ${{ secrets.NPM_TOKEN_DEV}}
   SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  GITHUB_REF: ${{ github.ref }}
 
 jobs:
   publish-npm:
@@ -47,8 +48,8 @@ jobs:
       - name: 'Extract info'
         run: |
           echo "GITHUB_AUTHOR=$(git log -1 --pretty=format:'%an <%ae>' | xargs)" >> $GITHUB_ENV
-          echo "PUBLISH_LOG=${{toJson(steps.npm-publish.outputs.content)}}" >> "$GITHUB_ENV"
-          echo "PACKAGE_VERSION=$(npm version --json | grep '@spartan-org/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
+          echo "PUBLISH_LOG=${{steps.npm-publish.outputs.content}}" >> "$GITHUB_ENV"
+          echo "PACKAGE_VERSION=$(npm version --json | grep '@c0x12c/e2e-playwright' | awk '{print $2}' | tr -d '",')" >> "$GITHUB_ENV"
           
       #- name: Run install
       #  run: yarn install --frozen-lockfile
@@ -60,7 +61,7 @@ jobs:
   
       #- name: NPM publish
       #  run: |
-      #    npm publish --access public --scope=@spartan-org >> npm_publish.log 2>&1
+      #    npm publish --access public --scope=@c0x12c >> npm_publish.log 2>&1
       #  env:
       #    NODE_AUTH_TOKEN: ${{ env.NPM_TOKEN }}
 
@@ -76,7 +77,7 @@ jobs:
                   "type": "section",
                   "text": {
                     "type": "mrkdwn",
-                    "text": "*Release version*: <${{env.PACKAGE_URL}}|Package @spartan-org/e2e-playwright]>. Version: ${{ env.PACKAGE_VERSION }}"
+                    "text": "*Release version*: <${{env.PACKAGE_URL}}|Package @c0x12c/e2e-playwright]>. Version: ${{ env.PACKAGE_VERSION }}"
                   }
                 },
                 {
